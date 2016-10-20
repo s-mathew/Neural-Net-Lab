@@ -42,10 +42,7 @@ def node_value(node, input_values, neuron_outputs):
     of neural net input values and a dictionary mapping neuron 
     names to their outputs, computes the effective value of this 
     node."""
-    if isinstance(node, basestring):
-        return input_values[node] if node in input_values else neuron_outputs[node]
-    else:
-        return node
+    raise NotImplementedError
 
 # Forward propagation
 def forward_prop(net, input_values, threshold_fn=stairstep):
@@ -72,9 +69,9 @@ def update_weights(net, input_values, desired_output, neuron_outputs, r=1):
     with the updated weights."""
     raise NotImplementedError
 
-def back_prop(net, input_values, desired_output, r=1, accuracy_threshold=-.001):
-    """Updates weights until accuracy surpasses minimum_accuracy.  Uses sigmoid
-    function to compute output.  Returns a tuple containing:
+def back_prop(net, input_values, desired_output, r=1, minimum_accuracy=-0.001):
+    """Updates weights until accuracy surpasses minimum_accuracy.  Uses the sigmoid
+    function to compute neuron output.  Returns a tuple containing:
     (1) the modified neural net, with trained weights
     (2) the number of iterations (that is, the number of weight updates)"""
     raise NotImplementedError
