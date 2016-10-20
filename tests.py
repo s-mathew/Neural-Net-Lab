@@ -497,13 +497,12 @@ make_test(type = 'VALUE',
                           + 'per layer)'),
           name = nn_hexagon_getargs)
 
-if TEST_NN_GRID:
-    nn_grid_getargs = 'nn_grid'
-    def nn_grid_testanswer(val, original_val = None):
-        return val == [4, 2, 1]
-    make_test(type = 'VALUE',
-              getargs = nn_grid_getargs,
-              testanswer = nn_grid_testanswer,
-              expected_val = ('(list indicating correct minimum number of neurons '
-                              + 'per layer)'),
-              name = nn_grid_getargs)
+nn_grid_getargs = 'nn_grid'
+def nn_grid_testanswer(val, original_val = None):
+    return val == [4, 2, 1]
+make_test(type = 'VALUE',
+          getargs = nn_grid_getargs,
+          testanswer = nn_grid_testanswer,
+          expected_val = ('(list indicating correct minimum number of neurons '
+                          + 'per layer)'),
+          name = nn_grid_getargs)

@@ -17,8 +17,6 @@ nn_stripe = []
 
 nn_hexagon = []
 
-# Optional problem; change TEST_NN_GRID to True to test locally
-TEST_NN_GRID = False
 nn_grid = []
 
 # Thresholding functions
