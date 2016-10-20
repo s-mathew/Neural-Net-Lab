@@ -1,4 +1,6 @@
-# 6.034 Lab 6 2015: Neural Nets & SVMs
+#!/usr/bin/env python2
+
+# MIT 6.034 Lab 6: Neural Nets
 
 import xmlrpclib
 import traceback
@@ -14,7 +16,18 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+python_version = sys.version_info
+is_windows = sys.platform in ["win32", "cygwin"]
+if python_version < (2, 3) or python_version >= (2, 8):
+    raise Exception("Illegal version of Python for 6.034 lab. Detected Python "
+                    + "version is: " + str(sys.version))
+elif is_windows and python_version >= (2, 6, 5) and python_version < (2, 7, 4):
+    raise Exception("Illegal version of Python for 6.034 lab. On Windows, "
+        +"Python versions between 2.6.5 and 2.7.3 (inclusive) are incompatible "
+        +"with our server. Detected Python version is: " + str(sys.version))
+
 try:
+    sys.path.append('..')
     from key import USERNAME as username, PASSWORD as password, XMLRPC_URL as server_url
 except ImportError:
     print "Error: Can't find your 'key.py' file!  Please go download one from"
@@ -70,6 +83,7 @@ def get_lab_module():
     for labnum in xrange(10):
         try:
             lab = __import__('lab%s' % labnum)
+            break
         except ImportError:
             pass
 
@@ -92,39 +106,6 @@ def encode_NeuralNet(net):
 def decode_NeuralNet(inputs, neurons, wires_encoded):
     return NeuralNet(inputs, neurons, map(decode_Wire, wires_encoded))
 
-def encode_Point(point):
-    return [point.name, point.coords, point.classification, point.alpha]
-def decode_Point(args):
-    return Point(*args)
-
-def encode_DecisionBoundary(boundary):
-    return [boundary.w, boundary.b]
-def decode_DecisionBoundary(args):
-    return DecisionBoundary(*args)
-
-def encode_SVM(svm):
-    return [encode_DecisionBoundary(svm.boundary),
-            map(encode_Point, svm.training_points),
-            map(encode_Point, svm.support_vectors)]
-def decode_SVM(boundary_encoded, training_points_encoded,
-               support_vectors_encoded):
-    boundary = decode_DecisionBoundary(boundary_encoded)
-    training_points = map(decode_Point, training_points_encoded)
-    support_vectors = decode_support_vectors(support_vectors_encoded,
-                                             training_points)
-    return SupportVectorMachine(boundary, training_points, support_vectors)
-
-def decode_support_vectors(support_vectors_encoded, training_points):
-    sv_names = [sv_args[0] for sv_args in support_vectors_encoded]
-    support_vectors = [get_point_by_name(name, training_points)
-                       for name in sv_names]
-    return support_vectors
-
-def get_point_by_name(name, points):
-    for p in points:
-        if p.name == name:
-            return p
-    raise NameError("SVM has no point with name " + str(name))
 
 # decode functions received from server
 function_dict = {'sigmoid': sigmoid, 'ReLU': ReLU}
@@ -143,10 +124,6 @@ def type_decode(arg, lab):
     if isinstance(arg, list) and len(arg) >= 1: # There is no future magic for tuples.
         if arg[0] == 'NeuralNet' and isinstance(arg[1], list):
             return decode_NeuralNet(*arg[1])
-        elif arg[0] == 'SVM' and isinstance(arg[1], list):
-            return decode_SVM(*arg[1])
-        elif arg[0] == 'Point' and isinstance(arg[1], list):
-            return decode_Point(arg[1]) # This is intentionally different
         elif arg[0] == 'callable':
             try:
                 return function_dict[arg[1]]
@@ -155,27 +132,28 @@ def type_decode(arg, lab):
                 print error_string + ". Please contact a TA if you continue to see this error."
                 return error_string
         else:
-            return [ type_decode(x, lab) for x in arg ]
+            try:
+                mytype = arg[0]
+                data = arg[1:]
+                return getattr(lab, mytype)([ type_decode(x, lab) for x in data ])
+            except (AttributeError, TypeError):
+                return [ type_decode(x, lab) for x in arg ]
     else:
         return arg
 
 
+def is_class_instance(obj, class_name):
+    return hasattr(obj, '__class__') and obj.__class__.__name__ == class_name
+
 def type_encode(arg):
-    "Encode objects as lists in a way that can be decoded by 'type_decode'"
-    if isinstance(arg, (list, tuple)):
+    "Encode objects as lists in a way that the server expects"
+    if isinstance(arg, (list, tuple)): #note that tuples become lists
         return [type_encode(a) for a in arg]
     elif is_class_instance(arg, 'NeuralNet'):
         return ['NeuralNet', encode_NeuralNet(arg)]
-    elif is_class_instance(arg, 'SupportVectorMachine'):
-        return ['SVM', encode_SVM(arg)]
-    elif is_class_instance(arg, 'Point'):
-        return ['Point', encode_Point(arg)]
     elif isinstance(arg, dict):
         # hack to prevent xmlrpclib TypeError "dictionary key must be string"
         return {str(k):arg[k] for k in arg}
-    elif isinstance(arg, set):
-        # because xmlrpclib "cannot marshal <type 'set'> objects"
-        return type_encode(list(arg)) # There is no magic for sets, either.
     else:
         return arg
 
@@ -220,15 +198,7 @@ def test_offline(verbosity=1):
     """ Run the unit tests in 'tests.py' """
     import tests as tests_module
 
-#    tests = [ (x[:-8],
-#               getattr(tests_module, x),
-#               getattr(tests_module, "%s_testanswer" % x[:-8]),
-#               getattr(tests_module, "%s_expected" % x[:-8]),
-#               "_".join(x[:-8].split('_')[:-1]))
-#              for x in tests_module.__dict__.keys() if x[-8:] == "_getargs" ]
-
     tests = tests_module.get_tests()
-
     ntests = len(tests)
     ncorrect = 0
 
@@ -252,20 +222,27 @@ def test_offline(verbosity=1):
         # incorrect, testanswer returns False instead of raising an exception.
         try:
             correct = testanswer(answer)
-        except:
+        except NotImplementedError:
+            print "%d: (%s: No answer given, NotImplementedError raised)" % (dispindex, testname)
+            continue
+        except (KeyboardInterrupt, SystemExit): # Allow user to interrupt tester
+            raise
+        except Exception:
+            #raise   # To debug tests by allowing them to raise exceptions, uncomment this
             correct = False
+
         show_result(summary, testname, correct, answer, expected, verbosity)
         if correct: ncorrect += 1
 
     print "Passed %d of %d tests." % (ncorrect, ntests)
     return ncorrect == ntests
 
-
 def get_target_upload_filedir():
     """ Get, via user prompting, the directory containing the current lab """
     cwd = os.getcwd() # Get current directory.  Play nice with Unicode pathnames, just in case.
 
-    print "Please specify the directory containing your lab."
+    print "Please specify the directory containing your lab,"
+    print "or press Enter to use the default directory."
     print "Note that all files from this directory will be uploaded!"
     print "Labs should not contain large amounts of data; very-large"
     print "files will fail to upload."
@@ -283,21 +260,46 @@ def get_target_upload_filedir():
 
 def get_tarball_data(target_dir, filename):
     """ Return a binary String containing the binary data for a tarball of the specified directory """
-    data = StringIO()
-    file = tarfile.open(filename, "w|bz2", data)
-
     print "Preparing the lab directory for transmission..."
 
-    file.add(target_dir)
+    data = StringIO()
+    tar = tarfile.open(filename, "w|bz2", data)
+
+    top_folder_name = os.path.split(target_dir)[1]
+
+    def tar_filter(filename):
+        """Returns True if we should tar the file.
+        Avoid uploading .pyc files or the .git subdirectory (if any)"""
+        if filename == ".git":
+            return False
+        if os.path.splitext(filename)[1] == ".pyc":
+            return False
+        return True
+
+    def add_dir(currentDir, t_verbose=False):
+        for currentFile in os.listdir(currentDir):
+            fullPath=os.path.join(currentDir,currentFile)
+            if t_verbose:
+                print currentFile,
+            if tar_filter(currentFile):
+                if t_verbose:
+                    print ""
+                tar.add(fullPath,arcname=fullPath.replace(target_dir, top_folder_name,1),recursive=False)
+                if os.path.isdir(fullPath):
+                    add_dir(fullPath)
+            elif t_verbose:
+                print "....skipped"
+
+    add_dir(target_dir)
 
     print "Done."
     print
     print "The following files have been added:"
 
-    for f in file.getmembers():
+    for f in tar.getmembers():
         print f.name
 
-    file.close()
+    tar.close()
 
     return data.getvalue()
 
@@ -325,9 +327,11 @@ def test_online(verbosity=1):
             print "if you use the version of Python in the 'python' locker."
             sys.exit(0)
     except xmlrpclib.Fault:
-        print "\nNote: Online tests for " + lab.__name__ + " are not currently available."
-        print "If you believe this is an error, please contact a TA.\n"
+        print "\nError: Either your key.py file is out of date, or online "
+        print "tests for " + lab.__name__ + " are not currently available."
+        print "If you believe this is may be a mistake, please contact a TA.\n"
         sys.exit(0)
+
     ntests = len(tests)
     ncorrect = 0
 
@@ -348,15 +352,14 @@ def test_online(verbosity=1):
         dispindex = index+1
         summary = test_summary(dispindex, ntests)
 
-        try:
+        try:  # Prevent errors from interrupting test execution
             answer = run_test(testcode, get_lab_module())
+            correct, expected = server.send_answer(username, password, lab.__name__, testcode[0], type_encode(answer))
+            show_result(summary, testcode, correct, answer, expected, verbosity)
+            if correct: ncorrect += 1
         except Exception:
             show_exception(summary, testcode)
             continue
-
-        correct, expected = server.send_answer(username, password, lab.__name__, testcode[0], type_encode(answer))
-        show_result(summary, testcode, correct, answer, expected, verbosity)
-        if correct: ncorrect += 1
 
     response = server.status(username, password, lab.__name__)
     print response
@@ -398,4 +401,3 @@ if __name__ == '__main__':
             test_online()
         else:
             print "Local tests passed! Run 'python %s submit' to submit your code and have it graded." % sys.argv[0]
-
