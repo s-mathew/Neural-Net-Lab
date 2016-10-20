@@ -1,6 +1,6 @@
 from tester import make_test, get_tests
 from nn_problems import *
-from lab6 import sigmoid, TEST_NN_GRID
+from lab6 import sigmoid
 from random import random, randint
 
 
