@@ -5,6 +5,7 @@ from nn_problems import *
 from lab6 import sigmoid, TEST_NN_GRID
 from random import random, randint
 
+lab_number = 6 #for tester.py
 
 def randnum(max_val=100):
     "Generates a random float 0 < n < max_val"
