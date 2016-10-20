@@ -1,4 +1,5 @@
-# 6.034 Lab 6 2015: Neural Nets & SVMs #todo
+# MIT 6.034 Lab 6: Neural Nets
+# Written by Jessica Noss (jmn), Dylan Holmes (dxh), Jake Barnwell (jb16), and 6.034 staff
 
 from nn_problems import *
 from math import e

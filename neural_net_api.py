@@ -1,3 +1,5 @@
+# MIT 6.034 Lab 6: Neural Nets
+
 from copy import deepcopy
 from random import shuffle
 
