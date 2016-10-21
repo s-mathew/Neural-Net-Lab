@@ -67,10 +67,9 @@ def gradient_ascent_step(func, inputs, step_size):
     (2) the list of inputs that yielded the highest function output."""
     raise NotImplementedError
 
-def calculate_back_prop_dependencies(net, wire):
-    """Given a wire in a neural network, returns a set of inputs, neurons,
-    and Wires whose outputs/values are required to compute the
-    delta_B coefficient required to update this wire's weight."""
+def get_back_prop_dependencies(net, wire):
+    """Given a wire in a neural network, returns a set of inputs, neurons, and
+    Wires whose outputs/values are required to update this wire's weight."""
     raise NotImplementedError
 
 # Backward propagation
