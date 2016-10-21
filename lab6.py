@@ -3,6 +3,7 @@
 
 from nn_problems import *
 from math import e
+INF = float('inf')
 
 #### NEURAL NETS ###############################################################
 
@@ -57,17 +58,13 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     raise NotImplementedError
 
 # Backward propagation warm-up
-def gradient_step(func, values, delta):
-    """Given some unknown function of three variables and a list of three
-    values representing the current inputs into the function,
-    finds the amount that the function changes
-    by varying (or not) each of the input variables by +/- delta (a total
-    3^3 = 27 possible assignments for the three variables). Picks
-    the assignments of variables that yields the smallest result when
-    input into the function, and returns a tuple containing
-    (1) the function value at the lowest point found, and
-    (2) the list of variable assignments that yielded the lowest
-    function value."""
+def gradient_ascent_step(func, values, step_size):
+    """Given an unknown function of three variables and a list of three values
+    representing the current inputs into the function, increments each variable
+    by +/- step_size or 0, with the goal of maximizing the function output.
+    After trying all possible variable assignments, returns a tuple containing:
+    (1) the maximum function output found, and
+    (2) the list of inputs that yielded the highest function output."""
     raise NotImplementedError
 
 def calculate_back_prop_dependencies(net, wire):

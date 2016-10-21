@@ -373,27 +373,27 @@ def funct1(x, y, z):
     return 5 * x + 3 * y ** 3 + cos(e - z ** 2)
 
 def funct2(x, y, z):
-    return -x - y - z
+    return -x + y + z
 
-def gradient_step_0_getargs() :  #TEST 29
+def gradient_ascent_step_0_getargs() :  #TEST 29
     return [funct1, [2, -5, 3], 0.1]
-def gradient_step_0_testanswer(val, original_val = None) :
-    return approx_equal(val[0], -387.6325, 0.001) and val[1] == [1.9, -5.1, 3.1]
+def gradient_ascent_step_0_testanswer(val, original_val = None) :
+    return approx_equal(val[0], -341.4470010762434, 0.001) and all(approx_equal(a,b,0.01) for (a,b) in zip(val[1], [2.1, -4.9, 3]))
 make_test(type = 'FUNCTION_ENCODED_ARGS',
-          getargs = gradient_step_0_getargs,
-          testanswer = gradient_step_0_testanswer,
-          expected_val = "(-387.6325123903298, [1.9, -5.1, 3.1])",
-          name = 'gradient_step')
+          getargs = gradient_ascent_step_0_getargs,
+          testanswer = gradient_ascent_step_0_testanswer,
+          expected_val = "(-341.4470, [2.1, -4.9, 3])",
+          name = 'gradient_ascent_step')
 
-def gradient_step_1_getargs() :  #TEST 30
+def gradient_ascent_step_1_getargs() :  #TEST 30
     return [funct2, [0, 0, 0], 0.001]
-def gradient_step_1_testanswer(val, original_val = None) :
-    return approx_equal(val[0], -0.003, 0.0001) and val[1] == [0.001, 0.001, 0.001]
+def gradient_ascent_step_1_testanswer(val, original_val = None) :
+    return approx_equal(val[0], 0.003, 0.0001) and all(approx_equal(a,b,0.0001) for (a,b) in zip(val[1], [-0.001, 0.001, 0.001]))
 make_test(type = 'FUNCTION_ENCODED_ARGS',
-          getargs = gradient_step_1_getargs,
-          testanswer = gradient_step_1_testanswer,
-          expected_val = "a tuple (value, assignments) representing the lowest possible function value",
-          name = 'gradient_step')
+          getargs = gradient_ascent_step_1_getargs,
+          testanswer = gradient_ascent_step_1_testanswer,
+          expected_val = "(0.003, [-0.001, 0.001, 0.001])",
+          name = 'gradient_ascent_step')
 
 #### BACK PROP DEPENDENCIES
 
