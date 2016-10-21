@@ -58,7 +58,7 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     raise NotImplementedError
 
 # Backward propagation warm-up
-def gradient_ascent_step(func, values, step_size):
+def gradient_ascent_step(func, inputs, step_size):
     """Given an unknown function of three variables and a list of three values
     representing the current inputs into the function, increments each variable
     by +/- step_size or 0, with the goal of maximizing the function output.
