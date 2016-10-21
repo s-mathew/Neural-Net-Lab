@@ -39,13 +39,14 @@ def accuracy(desired_output, actual_output):
     raise NotImplementedError
 
 # Forward propagation
-def node_value(node, input_values, neuron_outputs):
-    # Optional helper function; might be helpful later on
-    """Given a node in the neural net, as well as a dictionary
-    of neural net input values and a dictionary mapping neuron
-    names to their outputs, computes the effective value of this
-    node."""
-    raise NotImplementedError
+
+def node_value(node, input_values, neuron_outputs):  # STAFF PROVIDED
+    """Given a node, a dictionary mapping input names to their values, and a
+    dictionary mapping neuron names to their outputs, returns the output value
+    of the node."""
+    if isinstance(node, basestring):
+        return input_values[node] if node in input_values else neuron_outputs[node]
+    return node  # constant input, such as -1
 
 def forward_prop(net, input_values, threshold_fn=stairstep):
     """Given a neural net and dictionary of input values, performs forward
@@ -55,7 +56,7 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     (2) a dictionary mapping neurons to their immediate outputs"""
     raise NotImplementedError
 
-# Backward propagation warmup
+# Backward propagation warm-up
 def gradient_step(func, values, delta):
     """Given some unknown function of three variables and a list of three
     values representing the current inputs into the function,
