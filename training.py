@@ -29,7 +29,7 @@ def multi_forward_prop(net, threshold_fn=stairstep, resolution=1):
         line = []
         for j in xrange(resolution * 5):
             x = float(j) / resolution
-            result = forward_prop(net, {'x': x, 'y': y}, sigmoid)[0]
+            result = forward_prop(net, {'x': x, 'y': y}, threshold_fn)[0]
             if i % resolution == 0 and j % resolution == 0:
                 outputs.append(((x, y), result))
             line.append(result)
@@ -46,15 +46,16 @@ def multi_update_weights(net, desired_outputs, r=1, width=5, height=5):
     shuffle(desired_outputs)
     for desired_output in desired_outputs:
         input_values = {'x': desired_output[0][0], 'y': desired_output[0][1]}
-        net = update_weights(net, input_values, desired_output[1], r)
+        neuron_outputs = forward_prop(net, input_values, sigmoid)[1]
+        net = update_weights(net, input_values, desired_output[1], neuron_outputs, r)
     return net
 
-def multi_back_prop(net, desired_outputs, r=1, accuracy_threshold=-0.001, resolution=1):
+def multi_back_prop(net, desired_outputs, r=1, minimum_accuracy=-0.001, resolution=1):
     actual_outputs = multi_forward_prop(net, sigmoid, resolution)[0]
     c = 0
     current_accuracy = multi_accuracy(desired_outputs, actual_outputs)
     print c, current_accuracy
-    while current_accuracy < accuracy_threshold:
+    while current_accuracy < minimum_accuracy:
         net = multi_update_weights(net, desired_outputs, r)
         actual_outputs = multi_forward_prop(net, sigmoid, resolution)[0]
         c += 1
@@ -62,6 +63,7 @@ def multi_back_prop(net, desired_outputs, r=1, accuracy_threshold=-0.001, resolu
         print c, current_accuracy
     return net
 
+# Define neural nets
 def get_nn(w=None):
     if w is None:
         w = [5 * (0.5 - random()) for n in xrange(20)]
@@ -86,6 +88,8 @@ def get_small_nn(w=None):
 
 nets = {'small': get_small_nn, 'large': get_nn}
 
+
+# Define data sets
 
 # horizontal
 # - - - - -
@@ -153,6 +157,8 @@ moat = sorted([((0,0),0),((0,1),0),((0,2),0),((0,3),0),((0,4),0),((1,4),0),
 training_data = {'horizontal': horizontal, 'diagonal': diagonal, 'stripe': stripe,
                  'checkerboard': checkerboard, 'letterL': letterL, 'moat': moat}
 
+
+# Main function for training and heatmap
 def start_training(train=diagonal, net='large', resolution=1):
     pyplot.ion()
     pyplot.show()
