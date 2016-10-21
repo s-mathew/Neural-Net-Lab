@@ -33,19 +33,20 @@ def ReLU(x):
     "Computes the threshold of an input using a rectified linear unit."
     raise NotImplementedError
 
-# Helper functions
+# Accuracy function
 def accuracy(desired_output, actual_output):
     "Computes accuracy. If output is binary, accuracy ranges from -0.5 to 0."
     raise NotImplementedError
 
+# Forward propagation
 def node_value(node, input_values, neuron_outputs):
+    # Optional helper function; might be helpful later on
     """Given a node in the neural net, as well as a dictionary 
     of neural net input values and a dictionary mapping neuron 
     names to their outputs, computes the effective value of this 
     node."""
     raise NotImplementedError
 
-# Forward propagation
 def forward_prop(net, input_values, threshold_fn=stairstep):
     """Given a neural net and dictionary of input values, performs forward
     propagation with the given threshold function to compute binary output.
