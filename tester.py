@@ -9,7 +9,7 @@ import os
 import tarfile
 
 from neural_net_api import *
-from lab6 import sigmoid
+from lab6 import sigmoid, ReLU
 
 try:
     from cStringIO import StringIO

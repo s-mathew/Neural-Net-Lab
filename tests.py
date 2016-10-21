@@ -2,8 +2,9 @@
 
 from tester import make_test, get_tests
 from nn_problems import *
-from lab6 import sigmoid
+from lab6 import sigmoid, ReLU
 from random import random, randint
+from math import cos, e
 
 lab_number = 6 #for tester.py
 
@@ -108,6 +109,40 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
           expected_val = "~0.4378",
           name = 'sigmoid')
 
+## ReLU
+# x > 0 -> x
+def ReLU_0_getargs() :  #TEST 71
+    return [12]
+def ReLU_0_testanswer(val, original_val = None) :
+    return val == 12
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_0_getargs,
+          testanswer = ReLU_0_testanswer,
+          expected_val = "12",
+          name = 'ReLU')
+
+# x > 0 -> x
+ReLU_1_arg = randnum()
+def ReLU_1_getargs() :  #TEST 72
+    return [ReLU_1_arg]
+def ReLU_1_testanswer(val, original_val = None) :
+    return val == ReLU_1_arg
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_1_getargs,
+          testanswer = ReLU_1_testanswer,
+          expected_val = "{}".format(ReLU_1_arg),
+          name = 'ReLU')
+
+ReLU_2_arg = -1 * randnum()
+def ReLU_2_getargs() :  #TEST 73
+    return [ReLU_2_arg]
+def ReLU_2_testanswer(val, original_val = None) :
+    return val == 0
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_2_getargs,
+          testanswer = ReLU_2_testanswer,
+          expected_val = "0",
+          name = 'ReLU')
 
 ## accuracy
 #d=a -> 0
@@ -256,6 +291,82 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
                           + "('N1', 42)))"),
           name = 'forward_prop')
 
+# checks that the user doesn't modify the neural net
+input_net = nn_AND.copy()
+not_modified = input_net.copy()
+def forward_prop_8_getargs() :  #TEST 185
+    return [input_net, {'x':20, 'y':23.5}, ReLU]
+def forward_prop_8_testanswer(val, original_val = None) :
+    out, d = val
+    return out == 42 and d['N1'] == out and input_net == not_modified
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = forward_prop_8_getargs,
+          testanswer = forward_prop_8_testanswer,
+          expected_val = ("(42, (dict containing key-value pair: "
+                          + "('N1', 42))) and also checks for an unmodified neural net"),
+          name = 'forward_prop')
+
+#### GRADIENT DESCENT
+def funct1(x, y, z):
+    return 5 * x + 3 * y ** 3 + cos(e - z ** 2)
+
+def funct2(x, y, z):
+    return -x - y - z
+
+def gradient_step_0_getargs() :  #TEST 186
+    return [funct1, [2, -5, 3], 0.1]
+def gradient_step_0_testanswer(val, original_val = None) :
+    return approx_equal(val[0], -387.6325, 0.001) and val[1] == [1.9, -5.1, 3.1]
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = gradient_step_0_getargs,
+          testanswer = gradient_step_0_testanswer,
+          expected_val = "(-387.6325123903298, [1.9, -5.1, 3.1])",
+          name = 'gradient_step')
+
+def gradient_step_1_getargs() :  #TEST 187
+    return [funct2, [0, 0, 0], 0.001]
+def gradient_step_1_testanswer(val, original_val = None) :
+    return approx_equal(val[0], -0.003, 0.0001) and val[1] == [0.001, 0.001, 0.001]
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = gradient_step_1_getargs,
+          testanswer = gradient_step_1_testanswer,
+          expected_val = "a tuple (value, assignments) representing the lowest possible function value",
+          name = 'gradient_step')
+
+#### BACK PROP DEPENDENCIES
+
+calculate_back_prop_dependencies_0_expected = set(["in1", Wire("in1", "neuron", 1), "neuron"])
+def calculate_back_prop_dependencies_0_getargs() :  # TEST 188
+    return [nn_basic.copy(), Wire("in1", "neuron", 1)]
+def calculate_back_prop_dependencies_0_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_0_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_0_getargs,
+          testanswer = calculate_back_prop_dependencies_0_testanswer,
+          expected_val = "{}".format(calculate_back_prop_dependencies_0_expected),
+          name = 'calculate_back_prop_dependencies')
+
+calculate_back_prop_dependencies_1_expected = set([-1, "N1", Wire(-1, "N1", 1)])
+def calculate_back_prop_dependencies_1_getargs() :  # TEST 189
+    return [nn_AND.copy(), Wire(-1, "N1", 1)]
+def calculate_back_prop_dependencies_1_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_1_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_1_getargs,
+          testanswer = calculate_back_prop_dependencies_1_testanswer,
+          expected_val = "set of inputs, Wires, and neurons necessary to update this weight",
+          name = 'calculate_back_prop_dependencies')
+
+calculate_back_prop_dependencies_2_expected = set(["x", "line2", "X1", "X2", "AND", Wire("x", "line2", 1), Wire("line2", "X1", 1), Wire("line2", "X2", -1), Wire("X1", "AND", 1), Wire("X2", "AND", 1)])
+def calculate_back_prop_dependencies_2_getargs() :  # TEST 1895
+    return [nn_XOR_lines.copy(), Wire("x", "line2", 1)]
+def calculate_back_prop_dependencies_2_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_2_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_2_getargs,
+          testanswer = calculate_back_prop_dependencies_2_testanswer,
+          expected_val = "set of inputs, Wires, and neurons necessary to update this weight",
+          name = 'calculate_back_prop_dependencies')
 
 #### BACKWARD PROPAGATION
 

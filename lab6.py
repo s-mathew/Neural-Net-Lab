@@ -33,19 +33,20 @@ def ReLU(x):
     "Computes the threshold of an input using a rectified linear unit."
     raise NotImplementedError
 
-# Helper functions
+# Accuracy function
 def accuracy(desired_output, actual_output):
     "Computes accuracy. If output is binary, accuracy ranges from -0.5 to 0."
     raise NotImplementedError
 
+# Forward propagation
 def node_value(node, input_values, neuron_outputs):
+    # Optional helper function; might be helpful later on
     """Given a node in the neural net, as well as a dictionary 
     of neural net input values and a dictionary mapping neuron 
     names to their outputs, computes the effective value of this 
     node."""
     raise NotImplementedError
 
-# Forward propagation
 def forward_prop(net, input_values, threshold_fn=stairstep):
     """Given a neural net and dictionary of input values, performs forward
     propagation with the given threshold function to compute binary output.
@@ -53,6 +54,26 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     (1) the final output of the neural net
     (2) a dictionary mapping neurons to their immediate outputs"""
     raise NotImplementedError
+
+# Backward propagation warmup
+def gradient_step(func, values, delta):
+    """Given some unknown function of three variables and a list of three 
+    values representing the current inputs into the function,
+    finds the amount that the function changes
+    by varying (or not) each of the input variables by +/- delta (a total 
+    3^3 = 27 possible assignments for the three variables). Picks 
+    the assignments of variables that yields the smallest result when 
+    input into the function, and returns a tuple containing
+    (1) the function value at the lowest point found, and 
+    (2) the list of variable assignments that yielded the lowest
+    function value."""
+    raise NotImplementedError
+
+def calculate_back_prop_dependencies(net, wire):
+    """Given a wire in a neural network, returns a set of inputs, neurons,
+    and Wires whose outputs/values are required to compute the 
+    delta_B coefficient required to update this wire's weight."""
+    raise NotImplementedError 
 
 # Backward propagation
 def calculate_deltas(net, desired_output, neuron_outputs):
@@ -69,7 +90,6 @@ def update_weights(net, input_values, desired_output, neuron_outputs, r=1):
     sigmoid function to compute neuron output.  Returns the modified neural net,
     with the updated weights."""
     raise NotImplementedError
-
 
 def back_prop(net, input_values, desired_output, r=1, minimum_accuracy=-0.001):
     """Updates weights until accuracy surpasses minimum_accuracy.  Uses the

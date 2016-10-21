@@ -45,6 +45,9 @@ class Wire:
         except:
             return False
 
+    def __hash__(self):
+        return hash(self.startNode) * hash(self.endNode) * hash(self.weight)
+
     def __str__(self):
         return "Wire(%s, %s, %s)" % (str(self.startNode), str(self.endNode),
                                      str(self.weight))
@@ -190,8 +193,4 @@ class NeuralNet:
     __repr__ = __str__
 
 
-# Rectified Linear Unit (an alternative to stairstep or sigmoid)
-def ReLU(x):
-    return max(x, 0)
-
-__all__ = ['Wire', 'NeuralNet', 'ReLU', 'approx_equal']
+__all__ = ['Wire', 'NeuralNet', 'approx_equal']
