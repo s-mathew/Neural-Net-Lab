@@ -2,7 +2,7 @@
 
 from tester import make_test, get_tests
 from nn_problems import *
-from lab6 import sigmoid
+from lab6 import sigmoid, ReLU
 from random import random, randint
 from math import cos, e
 
@@ -109,6 +109,40 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
           expected_val = "~0.4378",
           name = 'sigmoid')
 
+## ReLU
+# x > 0 -> x
+def ReLU_0_getargs() :  #TEST 71
+    return [12]
+def ReLU_0_testanswer(val, original_val = None) :
+    return val == 12
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_0_getargs,
+          testanswer = ReLU_0_testanswer,
+          expected_val = "12",
+          name = 'ReLU')
+
+# x > 0 -> x
+ReLU_1_arg = randnum()
+def ReLU_1_getargs() :  #TEST 72
+    return [ReLU_1_arg]
+def ReLU_1_testanswer(val, original_val = None) :
+    return val == ReLU_1_arg
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_1_getargs,
+          testanswer = ReLU_1_testanswer,
+          expected_val = "{}".format(ReLU_1_arg),
+          name = 'ReLU')
+
+ReLU_2_arg = -1 * randnum()
+def ReLU_2_getargs() :  #TEST 73
+    return [ReLU_2_arg]
+def ReLU_2_testanswer(val, original_val = None) :
+    return val == 0
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = ReLU_2_getargs,
+          testanswer = ReLU_2_testanswer,
+          expected_val = "0",
+          name = 'ReLU')
 
 ## accuracy
 #d=a -> 0
@@ -284,8 +318,8 @@ def gradient_step_0_getargs() :  #TEST 186
 def gradient_step_0_testanswer(val, original_val = None) :
     return approx_equal(val[0], -387.6325, 0.001) and val[1] == [1.9, -5.1, 3.1]
 make_test(type = 'FUNCTION_ENCODED_ARGS',
-          getargs = gradient_descent_0_getargs,
-          testanswer = gradient_descent_0_testanswer,
+          getargs = gradient_step_0_getargs,
+          testanswer = gradient_step_0_testanswer,
           expected_val = "(-387.6325123903298, [1.9, -5.1, 3.1])",
           name = 'gradient_step')
 
