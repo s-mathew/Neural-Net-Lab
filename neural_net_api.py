@@ -73,7 +73,7 @@ class NeuralNet:
         """Returns a list of all the wires in the graph.  If startNode or
         endNode are provided, restricts to wires that start/end at particular
         nodes. (A node can be an input, a neuron, or the output OUT.)
-        If include_out is False, then the returned list of wires will never 
+        If include_out is False, then the returned list of wires will never
         include a wire that ends at the output OUT. """
         pred1 = lambda node: (startNode is None) or (node == startNode)
         pred2 = lambda node: (endNode is None)   or (node == endNode)
@@ -99,7 +99,7 @@ class NeuralNet:
     def get_outgoing_neighbors(self, node):
         """Returns an alphabetical list of neighboring nodes (neurons)
         that appear later in the neural net (that is, nodes that receive the
-        provided node's output). Each node appears at most once. Never 
+        provided node's output). Each node appears at most once. Never
         includes the hidden OUT node."""
         return sorted(distinct(map(lambda w: w.endNode,
                                    self._get_wires(startNode=node, include_out=False))))
@@ -188,7 +188,7 @@ class NeuralNet:
         return ('NeuralNet with:'
                 + '\n * %i inputs: %s' % len_and_str(self.inputs)
                 + '\n * %i neurons: %s' % len_and_str(self.neurons)
-                + '\n * %i wires: %s' % len_and_str(self.wires))
+                + '\n * %i wires: %s' % len_and_str(self.get_wires()))
 
     __repr__ = __str__
 
