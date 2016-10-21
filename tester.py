@@ -70,22 +70,20 @@ def show_exception(testsummary, testcode):
 def get_lab_module():
     # Try the easy way first
     try:
-        from tests import lab_number
+        from tests import lab_number as labnum
     except ImportError:
-        lab_number = None
+        labnum = None
 
-    if lab_number != None:
-        lab = __import__('lab%s' % lab_number)
-        return lab
-
-    lab = None
-
-    for labnum in xrange(10):
-        try:
-            lab = __import__('lab%s' % labnum)
-            break
-        except ImportError:
-            pass
+    if labnum != None:
+        lab = __import__('lab%s' % labnum)
+    else:
+        lab = None
+        for labnum in xrange(10):
+            try:
+                lab = __import__('lab%s' % labnum)
+                break
+            except ImportError:
+                pass
 
     if lab == None:
         raise ImportError, "Cannot find your lab; or, error importing it.  Try loading it by running 'python labN.py' (for the appropriate value of 'N')."
