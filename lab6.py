@@ -58,7 +58,7 @@ def update_weights(net, input_values, desired_output, r=1):
     updated weights."""
     raise NotImplementedError
 
-def back_prop(net, input_values, desired_output, r=1, accuracy_threshold=-.001):
+def back_prop(net, input_values, desired_output, r=1, accuracy_threshold=-0.001):
     """Updates weights until accuracy surpasses minimum_accuracy.  Uses sigmoid
     function to compute output.  Returns a tuple containing:
     (1) the modified neural net, with trained weights
