@@ -333,6 +333,41 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
           expected_val = "a tuple (value, assignments) representing the lowest possible function value",
           name = 'gradient_step')
 
+#### BACK PROP DEPENDENCIES
+
+calculate_back_prop_dependencies_0_expected = set(["in1", Wire("in1", "neuron", 1), "neuron"])
+def calculate_back_prop_dependencies_0_getargs() :  # TEST 188
+    return [nn_basic.copy(), Wire("in1", "neuron", 1)]
+def calculate_back_prop_dependencies_0_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_0_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_0_getargs,
+          testanswer = calculate_back_prop_dependencies_0_testanswer,
+          expected_val = "{}".format(calculate_back_prop_dependencies_0_expected),
+          name = 'calculate_back_prop_dependencies')
+
+calculate_back_prop_dependencies_1_expected = set([-1, "N1", Wire(-1, "N1", 1)])
+def calculate_back_prop_dependencies_1_getargs() :  # TEST 189
+    return [nn_AND.copy(), Wire(-1, "N1", 1)]
+def calculate_back_prop_dependencies_1_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_1_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_1_getargs,
+          testanswer = calculate_back_prop_dependencies_1_testanswer,
+          expected_val = "set of inputs, Wires, and neurons necessary to update this weight",
+          name = 'calculate_back_prop_dependencies')
+
+calculate_back_prop_dependencies_2_expected = set(["x", "line2", "X1", "X2", "AND", Wire("x", "line2", 1), Wire("line2", "X1", 1), Wire("line2", "X2", -1), Wire("X1", "AND", 1), Wire("X2", "AND", 1)])
+def calculate_back_prop_dependencies_2_getargs() :  # TEST 1895
+    return [nn_XOR_lines.copy(), Wire("x", "line2", 1)]
+def calculate_back_prop_dependencies_2_testanswer(val, original_val = None) :
+    return val == calculate_back_prop_dependencies_2_expected
+make_test(type = 'FUNCTION_ENCODED_ARGS',
+          getargs = calculate_back_prop_dependencies_2_getargs,
+          testanswer = calculate_back_prop_dependencies_2_testanswer,
+          expected_val = "set of inputs, Wires, and neurons necessary to update this weight",
+          name = 'calculate_back_prop_dependencies')
+
 #### BACKWARD PROPAGATION
 
 ## calculate_deltas
