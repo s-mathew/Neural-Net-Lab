@@ -2,7 +2,7 @@
 
 from tester import make_test, get_tests
 from nn_problems import *
-from lab6 import sigmoid, TEST_NN_GRID
+from lab6 import sigmoid
 from random import random, randint
 
 lab_number = 6 #for tester.py
@@ -262,7 +262,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 ## calculate_deltas
 #3 weights to update, final layer only
 def calculate_deltas_0_getargs() :  #TEST 19
-    return [nn_AND.copy(), {'x':3.5, 'y':-2}, 1]
+    return [nn_AND.copy(), 1, {'N1': 0.5}]
 def calculate_deltas_0_testanswer(val, original_val = None) :
     return val == {'N1': 0.125}
 make_test(type = 'FUNCTION_ENCODED_ARGS',
@@ -274,7 +274,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 #6 weights to update (River nn); shuffled
 def calculate_deltas_2_getargs() :  #TEST 20
     return [get_nn_River(1, -2, 5, 3, -2, 1).shuffle_lists(),
-            nn_River_inputs.copy(), nn_River_desired]
+            nn_River_desired, nn_River_fwd_prop1.copy()]
 calculate_deltas_2_expected_deltas = {'A': 0.04441976755198489,
                                       'B': -0.01186039570737828,
                                       'C': -0.1129630506644473}
@@ -296,7 +296,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 
 #requires summation over outgoing neurons C_i
 def calculate_deltas_3_getargs() :  #TEST 21
-    return [nn_branching.shuffle_lists(), {'in': 17}, 1]
+    return [nn_branching.shuffle_lists(), 1, nn_branching_fwd_prop1.copy()]
 calculate_deltas_3_expected_deltas = {'N1': 0.033042492944110255, \
     'N2': 0.027644450191861528, 'N3': -0.06291182225171182, \
     'Nin': -0.025101018356825537, 'Nout': 0.1406041318860752}
@@ -320,7 +320,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 ## update_weights
 #3 weights to update, final layer only
 def update_weights_0_getargs() :  #TEST 22
-    return [nn_AND.copy(), {'x':3.5, 'y':-2}, 1]
+    return [nn_AND.copy(), nn_AND_input.copy(), 1, {'N1': 0.5}]
 def update_weights_0_testanswer(val, original_val = None) :
     return val == nn_AND_update_iter1
 make_test(type = 'FUNCTION_ENCODED_ARGS',
@@ -331,7 +331,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 
 #3 weights to update, final layer only, different r
 def update_weights_1_getargs() :  #TEST 23
-    return [nn_AND.copy(), {'x':3.5, 'y':-2}, 1, 10]
+    return [nn_AND.copy(), nn_AND_input.copy(), 1, {'N1': 0.5}, 10]
 def update_weights_1_testanswer(val, original_val = None) :
     return val == nn_AND_update_iter1_r10
 make_test(type = 'FUNCTION_ENCODED_ARGS',
@@ -343,7 +343,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 #6 weights to update (River nn); shuffled
 def update_weights_2_getargs() :  #TEST 24
     return [get_nn_River(1, -2, 5, 3, -2, 1).shuffle_lists(),
-            nn_River_inputs.copy(), nn_River_desired]
+            nn_River_inputs.copy(), nn_River_desired, nn_River_fwd_prop1.copy()]
 update_weights_2_expected_net = get_nn_River(1.0444197675519848, \
     -2.0118603957073784, 5, 2.8870369493355525, -2.08258260725646, \
     0.9865344742802654)
@@ -371,7 +371,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
 
 #requires summation over outgoing neurons C_i
 def update_weights_3_getargs() :  #TEST 25
-    return [nn_branching.shuffle_lists(), {'in': 17}, 1]
+    return [nn_branching.shuffle_lists(), nn_branching_input.copy(), 1, nn_branching_fwd_prop1.copy()]
 def update_weights_3_testanswer(val, original_val = None) :
     return val.__eq__(nn_branching_update_iter1, 0.00000001)
 make_test(type = 'FUNCTION_ENCODED_ARGS',
@@ -500,13 +500,12 @@ make_test(type = 'VALUE',
                           + 'per layer)'),
           name = nn_hexagon_getargs)
 
-if TEST_NN_GRID:
-    nn_grid_getargs = 'nn_grid'
-    def nn_grid_testanswer(val, original_val = None):
-        return val == [4, 2, 1]
-    make_test(type = 'VALUE',
-              getargs = nn_grid_getargs,
-              testanswer = nn_grid_testanswer,
-              expected_val = ('(list indicating correct minimum number of neurons '
-                              + 'per layer)'),
-              name = nn_grid_getargs)
+nn_grid_getargs = 'nn_grid'
+def nn_grid_testanswer(val, original_val = None):
+    return val == [4, 2, 1]
+make_test(type = 'VALUE',
+          getargs = nn_grid_getargs,
+          testanswer = nn_grid_testanswer,
+          expected_val = ('(list indicating correct minimum number of neurons '
+                          + 'per layer)'),
+          name = nn_grid_getargs)
