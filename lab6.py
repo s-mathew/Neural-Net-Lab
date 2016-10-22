@@ -21,7 +21,7 @@ nn_hexagon = []
 
 nn_grid = []
 
-# Thresholding functions
+# Threshold functions
 def stairstep(x, threshold=0):
     "Computes stairstep(x) using the given threshold (T)"
     raise NotImplementedError
