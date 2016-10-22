@@ -618,3 +618,159 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
           testanswer = back_prop_4_testanswer,
           expected_val = "(" + str(nn_AND_update_iter3) + ", 3)",
           name = 'back_prop')
+
+
+#### Training a neural net
+
+#ANSWER_1
+ANSWER_1_getargs = 'ANSWER_1'  #TEST 45
+def ANSWER_1_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, int) and 11 <= val <= 60
+make_test(type = 'VALUE',
+          getargs = ANSWER_1_getargs,
+          testanswer = ANSWER_1_testanswer,
+          expected_val = "an int in the correct range",
+          name = ANSWER_1_getargs)
+
+#ANSWER_2
+ANSWER_2_getargs = 'ANSWER_2'  #TEST 46
+def ANSWER_2_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, int) and 11 <= val <= 60
+make_test(type = 'VALUE',
+          getargs = ANSWER_2_getargs,
+          testanswer = ANSWER_2_testanswer,
+          expected_val = "an int in the correct range",
+          name = ANSWER_2_getargs)
+
+#ANSWER_3
+ANSWER_3_getargs = 'ANSWER_3'  #TEST 47
+def ANSWER_3_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, int) and 2 <= val <= 10
+make_test(type = 'VALUE',
+          getargs = ANSWER_3_getargs,
+          testanswer = ANSWER_3_testanswer,
+          expected_val = "an int in the correct range",
+          name = ANSWER_3_getargs)
+
+#ANSWER_4
+ANSWER_4_getargs = 'ANSWER_4'  #TEST 48
+def ANSWER_4_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, int) and 60 <= val <= 350
+make_test(type = 'VALUE',
+          getargs = ANSWER_4_getargs,
+          testanswer = ANSWER_4_testanswer,
+          expected_val = "an int in the correct range",
+          name = ANSWER_4_getargs)
+
+#ANSWER_5
+ANSWER_5_getargs = 'ANSWER_5'  #TEST 49
+def ANSWER_5_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, int) and 10 <= val <= 70
+make_test(type = 'VALUE',
+          getargs = ANSWER_5_getargs,
+          testanswer = ANSWER_5_testanswer,
+          expected_val = "an int in the correct range",
+          name = ANSWER_5_getargs)
+
+#ANSWER_6
+ANSWER_6_getargs = 'ANSWER_6'  #TEST 50
+def ANSWER_6_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return val == 1
+make_test(type = 'VALUE',
+          getargs = ANSWER_6_getargs,
+          testanswer = ANSWER_6_testanswer,
+          expected_val = "an int representing the resolution",
+          name = ANSWER_6_getargs)
+
+#ANSWER_7
+ANSWER_7_getargs = 'ANSWER_7'  #TEST 51
+def ANSWER_7_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return isinstance(val, str) and val.lower() == 'checkerboard'
+make_test(type = 'VALUE',
+          getargs = ANSWER_7_getargs,
+          testanswer = ANSWER_7_testanswer,
+          expected_val = "the name of a dataset, as a string",
+          name = ANSWER_7_getargs)
+
+#ANSWER_8
+ANSWER_8_getargs = 'ANSWER_8'  #TEST 52
+def ANSWER_8_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    try:
+        return set([s.lower() for s in val]) == set(['small', 'medium', 'large'])
+    except Exception:
+        return False
+make_test(type = 'VALUE',
+          getargs = ANSWER_8_getargs,
+          testanswer = ANSWER_8_testanswer,
+          expected_val = "a list containing one or more of the strings 'small', 'medium', 'large'",
+          name = ANSWER_8_getargs)
+
+#ANSWER_9
+ANSWER_9_getargs = 'ANSWER_9'  #TEST 53
+def ANSWER_9_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return val in list('Bb')
+make_test(type = 'VALUE',
+          getargs = ANSWER_9_getargs,
+          testanswer = ANSWER_9_testanswer,
+          expected_val = "a string ('A', 'B', 'C', or 'D')",
+          name = ANSWER_9_getargs)
+
+#ANSWER_10
+ANSWER_10_getargs = 'ANSWER_10'  #TEST 54
+def ANSWER_10_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    return val in list('Dd')
+make_test(type = 'VALUE',
+          getargs = ANSWER_10_getargs,
+          testanswer = ANSWER_10_testanswer,
+          expected_val = "a string ('A', 'B', 'C', 'D', or 'E')",
+          name = ANSWER_10_getargs)
+
+#ANSWER_11
+ANSWER_11_getargs = 'ANSWER_11'  #TEST 55
+def ANSWER_11_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    try:
+        return set([s.upper() for s in val]) == set('AC')
+    except Exception:
+        return False
+make_test(type = 'VALUE',
+          getargs = ANSWER_11_getargs,
+          testanswer = ANSWER_11_testanswer,
+          expected_val = "a list of one or more strings, selected from " + str(list('ABCD')),
+          name = ANSWER_11_getargs)
+
+#ANSWER_12
+ANSWER_12_getargs = 'ANSWER_12'  #TEST 56
+def ANSWER_12_testanswer(val, original_val = None):
+    if val == None:
+        raise NotImplementedError
+    try:
+        return set([s.upper() for s in val]) == set('AE')
+    except Exception:
+        return False
+make_test(type = 'VALUE',
+          getargs = ANSWER_12_getargs,
+          testanswer = ANSWER_12_testanswer,
+          expected_val = "a list of one or more strings, selected from " + str(list('ABCDE')),
+          name = ANSWER_12_getargs)

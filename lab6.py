@@ -96,6 +96,24 @@ def back_prop(net, input_values, desired_output, r=1, minimum_accuracy=-0.001):
     raise NotImplementedError
 
 
+# Training a neural net
+
+ANSWER_1 = None
+ANSWER_2 = None
+ANSWER_3 = None
+ANSWER_4 = None
+ANSWER_5 = None
+
+ANSWER_6 = None
+ANSWER_7 = None
+ANSWER_8 = None
+ANSWER_9 = None
+
+ANSWER_10 = None
+ANSWER_11 = None
+ANSWER_12 = None
+
+
 #### SURVEY ####################################################################
 
 NAME = None
