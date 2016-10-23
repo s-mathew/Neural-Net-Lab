@@ -21,7 +21,7 @@ def multi_accuracy(desired_outputs, actual_outputs):
     return float(total) / len(pairs)
 
 # Multi-point forward propagation
-def multi_forward_prop(net, threshold_fn=stairstep, resolution=1):
+def multi_forward_prop(net, threshold_fn=sigmoid, resolution=1):
     outputs = []
     data = []
     for i in xrange(resolution * 5):
@@ -64,18 +64,6 @@ def multi_back_prop(net, desired_outputs, r=1, minimum_accuracy=-0.001, resoluti
     return net
 
 # Define neural nets
-def get_nn(w=None):
-    if w is None:
-        w = [5 * (0.5 - random()) for n in xrange(20)]
-    return NeuralNet(['x', 'y', -1], list('ABCDEF')) \
-        .join('x', 'A', w[0]).join('x', 'B', w[1]).join('y', 'A', w[2]) \
-        .join('y', 'B', w[3]).join('y', 'C', w[4]).join('x', 'C', w[5]) \
-        .join(-1, 'A', w[6]).join(-1, 'B', w[7]).join(-1, 'C', w[8]) \
-        .join('A', 'E', w[9]).join('A', 'D', w[10]).join('B', 'D', w[11]) \
-        .join(-1, 'D', w[12]).join(-1, 'E', w[13]).join(-1, 'F', w[14]) \
-        .join('B', 'E', w[15]).join('C', 'E', w[16]).join('C', 'D', w[17]) \
-        .join('D', 'F', w[18]).join('E', 'F', w[19]).join('F', NeuralNet.OUT)
-
 def get_small_nn(w=None):
     if w is None:
         w = [10 * (0.5 - random()) for n in xrange(9)]
@@ -86,7 +74,44 @@ def get_small_nn(w=None):
         .join(-1, 'A', w[6]).join(-1, 'B', w[7]).join(-1, 'C', w[8]) \
         .join('C', NeuralNet.OUT)
 
-nets = {'small': get_small_nn, 'large': get_nn}
+def get_medium_nn(w=None):
+    if w is None:
+        w = [10 * (0.5 - random()) for n in xrange(20)]
+    return NeuralNet(['x', 'y', -1], list('ABCDEF')) \
+        .join('x', 'A', w[0]).join('x', 'B', w[1]).join('y', 'A', w[2]) \
+        .join('y', 'B', w[3]).join('y', 'C', w[4]).join('x', 'C', w[5]) \
+        .join(-1, 'A', w[6]).join(-1, 'B', w[7]).join(-1, 'C', w[8]) \
+        .join('A', 'E', w[9]).join('A', 'D', w[10]).join('B', 'D', w[11]) \
+        .join(-1, 'D', w[12]).join(-1, 'E', w[13]).join(-1, 'F', w[14]) \
+        .join('B', 'E', w[15]).join('C', 'E', w[16]).join('C', 'D', w[17]) \
+        .join('D', 'F', w[18]).join('E', 'F', w[19]).join('F', NeuralNet.OUT)
+
+def get_large_nn():
+    w = lambda: 10 * (0.5 - random())
+    nn = NeuralNet(['x', 'y', -1], list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
+
+    #first layer: A-J (10 neurons)
+    for n1 in 'ABCDEFGHIJ':
+        nn.join('x', n1, w()).join('y', n1, w())
+
+        #second layer: K-T (10 neurons)
+        for n2 in 'KLMNOPQRST':
+            nn.join(n1, n2, w())
+
+    #third layer: U-Y (5 neurons)
+    for n3 in 'UVWXY':
+        for n2 in 'KLMNOPQRST':
+            nn.join(n2, n3, w())
+
+        #final layer: Z (1 neuron)
+        nn.join(n3, 'Z', w())
+
+    #define Z as output neuron
+    nn.join('Z', NeuralNet.OUT)
+
+    return nn
+
+nets = {'small': get_small_nn, 'medium': get_medium_nn, 'large': get_large_nn}
 
 
 # Define data sets
@@ -159,11 +184,11 @@ training_data = {'horizontal': horizontal, 'diagonal': diagonal, 'stripe': strip
 
 
 # Main function for training and heatmap
-def start_training(train=diagonal, net='large', resolution=1):
+def start_training(train=diagonal, net_fn=get_medium_nn, resolution=1):
     pyplot.ion()
     pyplot.show()
 
-    nn = nets.get(net, get_nn)()
+    nn = net_fn()
     print 'Initial neural net:\n', nn
 
     nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
@@ -180,7 +205,7 @@ def start_training(train=diagonal, net='large', resolution=1):
 
 if __name__ == "__main__":
     train = diagonal
-    net = 'large'
+    net = get_medium_nn
     resolution = 1
     if '-data' in argv:
         if argv[argv.index('-data') + 1] in training_data:
@@ -193,9 +218,9 @@ if __name__ == "__main__":
         if argv[argv.index('-net') + 1] in nets:
             net = nets[argv[argv.index('-net') + 1]]
         else:
-            print 'net not found, defaulting to large net'
+            print 'net not found, defaulting to medium net'
     else:
-        print 'defaulting to large net'
+        print 'defaulting to medium net'
     if '-resolution' in argv:
         try:
             resolution = int(argv[argv.index('-resolution') + 1])
