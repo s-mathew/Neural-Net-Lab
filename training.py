@@ -184,17 +184,48 @@ training_data = {'horizontal': horizontal, 'diagonal': diagonal, 'stripe': strip
 
 
 # Main function for training and heatmap
-def start_training(train=diagonal, net_fn=get_medium_nn, resolution=1):
+def start_training(data=None, net=None, resolution=None):
+    if data == None:
+        print 'defaulting to diagonal training dataset'
+        train = diagonal
+    elif data in training_data:
+        train = training_data[data]
+    else:
+        print 'training dataset not found, defaulting to diagonal'
+        train = diagonal
+
+    if net == None:
+        print 'defaulting to medium net'
+        net_fn = get_medium_nn
+    elif net in nets:
+        net_fn = nets[net]
+    else:
+        print 'net not found, defaulting to medium net'
+        net_fn = get_medium_nn
+
+    if resolution == None:
+        print 'defaulting to resolution of 1'
+        resolution = 1
+    else:
+        try:
+            resolution = int(resolution)
+            assert resolution > 0
+        except Exception:
+            print 'invalid resolution, defaulting to 1'
+            resolution = 1
+
     pyplot.ion()
     pyplot.show()
 
     nn = net_fn()
-    print 'Initial neural net:\n', nn
+    print '\nInitial neural net:\n', nn
+
+    print '\nIter, Accuracy:'
 
     nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
     pyplot.ioff()
 
-    print nn
+    print '\nTrained neural net:\n', nn
     data = multi_forward_prop(nn, sigmoid, resolution)[1]
 
     pyplot.clf()
@@ -204,28 +235,22 @@ def start_training(train=diagonal, net_fn=get_medium_nn, resolution=1):
 
 
 if __name__ == "__main__":
-    train = diagonal
-    net = get_medium_nn
+    train = "diagonal"
+    net = "medium"
     resolution = 1
+
     if '-data' in argv:
-        if argv[argv.index('-data') + 1] in training_data:
-            train = training_data[argv[argv.index('-data') + 1]]
-        else:
-            print 'training dataset not found, defaulting to diagonal'
+        train = argv[argv.index('-data') + 1]
     else:
         print 'defaulting to diagonal training dataset'
+
     if '-net' in argv:
-        if argv[argv.index('-net') + 1] in nets:
-            net = nets[argv[argv.index('-net') + 1]]
-        else:
-            print 'net not found, defaulting to medium net'
+        net = argv[argv.index('-net') + 1]
     else:
         print 'defaulting to medium net'
+
     if '-resolution' in argv:
-        try:
-            resolution = int(argv[argv.index('-resolution') + 1])
-        except Exception:
-            print 'invalid resolution, defaulting to 1'
+        resolution = argv[argv.index('-resolution') + 1]
     else:
         print 'defaulting to resolution of 1'
 
