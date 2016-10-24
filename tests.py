@@ -380,7 +380,7 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
                           + "('N1', 42))) and also checks for an unmodified neural net"),
           name = 'forward_prop')
 
-#### GRADIENT DESCENT
+#### GRADIENT ASCENT
 def funct1(x, y, z):
     return 5 * x + 3 * y ** 3 + cos(e - z ** 2)
 
