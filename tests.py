@@ -29,6 +29,8 @@ def dict_approx_equal(dict1, dict2, epsilon=0.00000001):
 
 nn_half_getargs = 'nn_half'
 def nn_half_testanswer(val, original_val = None):  #TEST 1
+    if val == []:
+        raise NotImplementedError
     return val == [1]
 make_test(type = 'VALUE',
           getargs = nn_half_getargs,
@@ -39,6 +41,8 @@ make_test(type = 'VALUE',
 
 nn_angle_getargs = 'nn_angle'
 def nn_angle_testanswer(val, original_val = None):  #TEST 2
+    if val == []:
+        raise NotImplementedError
     return val == [2, 1]
 make_test(type = 'VALUE',
           getargs = nn_angle_getargs,
@@ -49,6 +53,8 @@ make_test(type = 'VALUE',
 
 nn_cross_getargs = 'nn_cross'
 def nn_cross_testanswer(val, original_val = None):  #TEST 3
+    if val == []:
+        raise NotImplementedError
     return val == [2, 2, 1]
 make_test(type = 'VALUE',
           getargs = nn_cross_getargs,
@@ -59,6 +65,8 @@ make_test(type = 'VALUE',
 
 nn_stripe_getargs = 'nn_stripe'
 def nn_stripe_testanswer(val, original_val = None):  #TEST 4
+    if val == []:
+        raise NotImplementedError
     return val == [3, 1]
 make_test(type = 'VALUE',
           getargs = nn_stripe_getargs,
@@ -69,6 +77,8 @@ make_test(type = 'VALUE',
 
 nn_hexagon_getargs = 'nn_hexagon'
 def nn_hexagon_testanswer(val, original_val = None):  #TEST 5
+    if val == []:
+        raise NotImplementedError
     return val == [6, 1]
 make_test(type = 'VALUE',
           getargs = nn_hexagon_getargs,
@@ -79,6 +89,8 @@ make_test(type = 'VALUE',
 
 nn_grid_getargs = 'nn_grid'
 def nn_grid_testanswer(val, original_val = None):  #TEST 6
+    if val == []:
+        raise NotImplementedError
     return val == [4, 2, 1]
 make_test(type = 'VALUE',
           getargs = nn_grid_getargs,
