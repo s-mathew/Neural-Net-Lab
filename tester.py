@@ -10,6 +10,7 @@ import tarfile
 
 from neural_net_api import *
 from lab6 import sigmoid, ReLU
+from math import cos, e
 
 try:
     from cStringIO import StringIO
@@ -106,7 +107,8 @@ def decode_NeuralNet(inputs, neurons, wires_encoded):
 
 
 # decode functions received from server
-function_dict = {'sigmoid': sigmoid, 'ReLU': ReLU}
+fns=[lambda x,y,z:5*x+3*y**3+cos(e-z**2),lambda x,y,z:y+z-x,lambda a,b,c:0,lambda a,b,c:c*a-b]
+function_dict = {'sigmoid': sigmoid, 'ReLU': ReLU, 'fn0': fns[0], 'fn1': fns[1], 'fn2': fns[2], 'fn3': fns[3]}
 
 
 def type_decode(arg, lab):
@@ -119,9 +121,14 @@ def type_decode(arg, lab):
     constructor takes a list as an argument; it uses that to reconstruct the
     original data type.
     """
+    if isinstance(arg, dict):
+        # hack to decode dictionary keys that were originally non-strings
+        return {(-1 if k=='-1' else k):arg[k] for k in arg}
     if isinstance(arg, list) and len(arg) >= 1: # There is no future magic for tuples.
         if arg[0] == 'NeuralNet' and isinstance(arg[1], list):
             return decode_NeuralNet(*arg[1])
+        if arg[0] == 'Wire' and isinstance(arg[1], list):
+            return decode_Wire(arg[1])
         elif arg[0] == 'callable':
             try:
                 return function_dict[arg[1]]
@@ -145,10 +152,12 @@ def is_class_instance(obj, class_name):
 
 def type_encode(arg):
     "Encode objects as lists in a way that the server expects"
-    if isinstance(arg, (list, tuple)): #note that tuples become lists
+    if isinstance(arg, (list, tuple, set)): #note that tuples and sets become lists
         return [type_encode(a) for a in arg]
     elif is_class_instance(arg, 'NeuralNet'):
         return ['NeuralNet', encode_NeuralNet(arg)]
+    elif is_class_instance(arg, 'Wire'):
+        return ['Wire', encode_Wire(arg)]
     elif isinstance(arg, dict):
         # hack to prevent xmlrpclib TypeError "dictionary key must be string"
         return {str(k):arg[k] for k in arg}
