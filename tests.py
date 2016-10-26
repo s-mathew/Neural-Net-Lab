@@ -420,9 +420,9 @@ make_test(type = 'FUNCTION_ENCODED_ARGS',
           expected_val = "{}".format(get_back_prop_dependencies_0_expected),
           name = 'get_back_prop_dependencies')
 
-get_back_prop_dependencies_1_expected = set([-1, "N1", Wire(-1, "N1", 1)])
+get_back_prop_dependencies_1_expected = set([-1, "N1", Wire(-1, "N1", 1.5)])
 def get_back_prop_dependencies_1_getargs() :  #TEST 32
-    return [nn_AND.copy(), Wire(-1, "N1", 1)]
+    return [nn_AND.copy(), Wire(-1, "N1", 1.5)]
 def get_back_prop_dependencies_1_testanswer(val, original_val = None) :
     return val == get_back_prop_dependencies_1_expected
 make_test(type = 'FUNCTION_ENCODED_ARGS',
