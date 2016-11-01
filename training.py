@@ -222,7 +222,21 @@ def start_training(data=None, net=None, resolution=None):
 
     print '\nIter, Accuracy:'
 
-    nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
+    try:
+        nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
+    except Exception, e:
+        if str(type(e)) == "<class '_tkinter.TclError'>": #this is a hack
+            print '\nException caught: _tkinter.TclError:', e, '\n'
+            Athena_ssh_error_message = ("If you are running this on Athena "
+                + "over ssh, try sshing again using the -X flag, which allows "
+                + "Athena to display GUI windows on your local desktop.  "
+                + "If you want to see the original stack trace instead of this "
+                + "error, find the line in training.py that raises this "
+                + "RuntimeError and replace it with 'raise e'.")
+            raise RuntimeError(Athena_ssh_error_message)
+        else:
+            raise e
+
     pyplot.ioff()
 
     print '\nTrained neural net:\n', nn
