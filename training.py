@@ -37,7 +37,7 @@ def multi_forward_prop(net, threshold_fn=sigmoid, resolution=1):
     data = numpy.array(data)
 
     pyplot.pcolor(data)
-    pyplot.draw()
+    pyplot.pause(0.0001)
 
     return (sorted(outputs), data)
 
