@@ -3,10 +3,13 @@
 # MIT 6.034 Lab 6: Neural Nets
 # This file originally written by Joel Gustafson and Kenny Friedman
 
+from __future__ import print_function
+
 from sys import argv
 from random import random, shuffle
 from matplotlib import pyplot
 import numpy
+import _tkinter
 from lab6 import *
 
 def multi_accuracy(desired_outputs, actual_outputs):
@@ -224,18 +227,15 @@ def start_training(data=None, net=None, resolution=None):
 
     try:
         nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
-    except Exception as e:
-        if str(type(e)) == "<class '_tkinter.TclError'>": #this is a hack
-            print('\nException caught: _tkinter.TclError:', e, '\n')
-            Athena_ssh_error_message = ("If you are running this on Athena "
-                + "over ssh, try sshing again using the -X flag, which allows "
-                + "Athena to display GUI windows on your local desktop.  "
-                + "If you want to see the original stack trace instead of this "
-                + "error, find the line in training.py that raises this "
-                + "RuntimeError and replace it with 'raise e'.")
-            raise RuntimeError(Athena_ssh_error_message)
-        else:
-            raise e
+    except _tkinter.TclError as e:
+        print('\nException caught: ', e, '\n')
+        Athena_ssh_error_message = ("If you are running this on Athena "
+            + "over ssh, try sshing again using the -X flag, which allows "
+            + "Athena to display GUI windows on your local desktop.  "
+            + "If you want to see the original stack trace instead of this "
+            + "error, find the line in training.py that raises this "
+            + "RuntimeError and replace it with 'raise e'.")
+        raise RuntimeError(Athena_ssh_error_message)
 
     pyplot.ioff()
 
