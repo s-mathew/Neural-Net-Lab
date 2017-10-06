@@ -11,6 +11,12 @@ def distinct(seq):
 def approx_equal(a, b, epsilon):
     return abs(a-b) <= epsilon
 
+def sort_nodes(nodes):
+    """Calling sorted(nodes) will fail because nodes may contain
+    numbers, and we can't compre ints to strings. So always use
+    this method instead of calling sorted(nodes)."""
+    return sorted(nodes, key=lambda n: str(n))
+
 class Wire:
     """A Wire is a directed edge that can be used in a neural net to connect
     an input to a neuron, a neuron to a neuron, or a neuron to OUT."""
@@ -26,8 +32,8 @@ class Wire:
         # Do not allow the (output_neuron, NeuralNet.OUT) to be modified
         if self.endNode == NeuralNet.OUT:
             if new_weight == self.weight:
-                print "[WARNING] You are trying to set the weight of internal Wire {} to {}. \
-                Why are you doing that?".format(str(self), new_weight)
+                print("[WARNING] You are trying to set the weight of internal Wire {} to {}. \
+                Why are you doing that?".format(str(self), new_weight))
             else:
                 raise RuntimeError("This wire ({}) should never be modified. Changing the \
                     weight of this wire will break the neural net.".format(str(self)))
@@ -80,8 +86,7 @@ class NeuralNet:
         pred_out = lambda end: include_out or ((not include_out) and end != NeuralNet.OUT)
 
         pred = lambda start, end: pred1(start) and pred2(end) and pred_out(end)
-        return filter(lambda w: w is not None,
-                      [w if pred(w.startNode, w.endNode) else None for w in self.wires])
+        return [w for w in [w if pred(w.startNode, w.endNode) else None for w in self.wires] if w is not None]
 
     def get_wires(self, startNode=None, endNode=None):
         """Returns a list of all the wires in the graph.  If startNode or
@@ -93,16 +98,16 @@ class NeuralNet:
         """Returns an alphabetical list of neighboring nodes (neurons or inputs)
         that appear earlier in the neural net (that is, nodes that have wires
         leading into the provided node). Each node appears at most once."""
-        return sorted(distinct(map(lambda w: w.startNode,
-                                   self._get_wires(endNode=node))))
+        in_nodes_distinct = distinct([w.startNode for w in self._get_wires(endNode=node)])
+        return sort_nodes(in_nodes_distinct)
 
     def get_outgoing_neighbors(self, node):
         """Returns an alphabetical list of neighboring nodes (neurons)
         that appear later in the neural net (that is, nodes that receive the
         provided node's output). Each node appears at most once. Never
         includes the hidden OUT node."""
-        return sorted(distinct(map(lambda w: w.endNode,
-                                   self._get_wires(startNode=node, include_out=False))))
+        out_nodes_distinct = distinct([w.endNode for w in self._get_wires(startNode=node, include_out=False)])
+        return sort_nodes(out_nodes_distinct)
 
     def get_wire(self, startNode, endNode):
         """Returns the wire that directly connects startNode to endNode
@@ -119,8 +124,7 @@ class NeuralNet:
     def has_incoming_neuron(self, node):
         """Returns True if node has at least one incoming neuron, otherwise
         False."""
-        return any(map(lambda n: n in self.neurons,
-                       self.get_incoming_neighbors(node)))
+        return any([n in self.neurons for n in self.get_incoming_neighbors(node)])
 
     def is_output_neuron(self, neuron):
         "Returns True if neuron is the output-layer neuron, otherwise False."
@@ -150,13 +154,13 @@ class NeuralNet:
     def join(self, startNode, endNode, weight=1):
         "Adds a Wire between two nodes"
         if startNode not in self.neurons + self.inputs:
-            print "NeuralNet.join: Adding", startNode, "to list of neurons"
+            print("NeuralNet.join: Adding", startNode, "to list of neurons")
             self.neurons.append(startNode)
         if endNode not in self.neurons + [NeuralNet.OUT]:
-            print "NeuralNet.join: Adding", endNode, "to list of neurons"
+            print("NeuralNet.join: Adding", endNode, "to list of neurons")
             self.neurons.append(endNode)
         if self.is_connected(startNode, endNode):
-            print "NeuralNet.join: Error adding wire: nodes already connected"
+            print("NeuralNet.join: Error adding wire: nodes already connected")
             return self
         self.wires.append(Wire(startNode, endNode, weight))
         return self
@@ -164,7 +168,7 @@ class NeuralNet:
     def shuffle_lists(self):
         """Randomly reorders elements within each attribute list, resulting in
         an equivalent neural net."""
-        map(shuffle, [self.inputs, self.neurons, self.wires])
+        list(map(shuffle, [self.inputs, self.neurons, self.wires]))
         return self
 
     def copy(self):
@@ -174,11 +178,12 @@ class NeuralNet:
         wire_key = lambda w: str(w.startNode) + '-' + str(w.endNode)
         sort_wires = lambda wires: sorted(wires, key=wire_key)
         try:
-            assert sorted(self.inputs) == sorted(other.inputs)
-            assert sorted(self.neurons) == sorted(other.neurons)
+            # print("Here 1")
+            assert sort_nodes(self.inputs) == sort_nodes(other.inputs)
+            assert sort_nodes(self.neurons) == sort_nodes(other.neurons)
             assert len(self.wires) == len(other.wires)
             assert all([w1.__eq__(w2, epsilon) for w1, w2
-                        in zip(*map(sort_wires, [self.wires, other.wires]))])
+                        in zip(*list(map(sort_wires, [self.wires, other.wires])))])
             return True
         except:
             return False

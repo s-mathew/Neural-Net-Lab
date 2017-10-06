@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # MIT 6.034 Lab 6: Neural Nets
 # This file originally written by Joel Gustafson and Kenny Friedman
@@ -24,10 +24,10 @@ def multi_accuracy(desired_outputs, actual_outputs):
 def multi_forward_prop(net, threshold_fn=sigmoid, resolution=1):
     outputs = []
     data = []
-    for i in xrange(resolution * 5):
+    for i in range(resolution * 5):
         y = float(i) / resolution
         line = []
-        for j in xrange(resolution * 5):
+        for j in range(resolution * 5):
             x = float(j) / resolution
             result = forward_prop(net, {'x': x, 'y': y}, threshold_fn)[0]
             if i % resolution == 0 and j % resolution == 0:
@@ -54,19 +54,19 @@ def multi_back_prop(net, desired_outputs, r=1, minimum_accuracy=-0.001, resoluti
     actual_outputs = multi_forward_prop(net, sigmoid, resolution)[0]
     c = 0
     current_accuracy = multi_accuracy(desired_outputs, actual_outputs)
-    print c, current_accuracy
+    print(c, current_accuracy)
     while current_accuracy < minimum_accuracy:
         net = multi_update_weights(net, desired_outputs, r)
         actual_outputs = multi_forward_prop(net, sigmoid, resolution)[0]
         c += 1
         current_accuracy = multi_accuracy(desired_outputs, actual_outputs)
-        print c, current_accuracy
+        print(c, current_accuracy)
     return net
 
 # Define neural nets
 def get_small_nn(w=None):
     if w is None:
-        w = [10 * (0.5 - random()) for n in xrange(9)]
+        w = [10 * (0.5 - random()) for n in range(9)]
     return NeuralNet(['x', 'y', -1], ['A','B','C']) \
         .join('x', 'A', w[0]).join('x', 'B', w[1]) \
         .join('y', 'A', w[2]).join('y', 'B', w[3]) \
@@ -76,7 +76,7 @@ def get_small_nn(w=None):
 
 def get_medium_nn(w=None):
     if w is None:
-        w = [10 * (0.5 - random()) for n in xrange(20)]
+        w = [10 * (0.5 - random()) for n in range(20)]
     return NeuralNet(['x', 'y', -1], list('ABCDEF')) \
         .join('x', 'A', w[0]).join('x', 'B', w[1]).join('y', 'A', w[2]) \
         .join('y', 'B', w[3]).join('y', 'C', w[4]).join('x', 'C', w[5]) \
@@ -186,47 +186,47 @@ training_data = {'horizontal': horizontal, 'diagonal': diagonal, 'stripe': strip
 # Main function for training and heatmap
 def start_training(data=None, net=None, resolution=None):
     if data == None:
-        print 'defaulting to diagonal training dataset'
+        print('defaulting to diagonal training dataset')
         train = diagonal
     elif data in training_data:
         train = training_data[data]
     else:
-        print 'training dataset not found, defaulting to diagonal'
+        print('training dataset not found, defaulting to diagonal')
         train = diagonal
 
     if net == None:
-        print 'defaulting to medium net'
+        print('defaulting to medium net')
         net_fn = get_medium_nn
     elif net in nets:
         net_fn = nets[net]
     else:
-        print 'net not found, defaulting to medium net'
+        print('net not found, defaulting to medium net')
         net_fn = get_medium_nn
 
     if resolution == None:
-        print 'defaulting to resolution of 1'
+        print('defaulting to resolution of 1')
         resolution = 1
     else:
         try:
             resolution = int(resolution)
             assert resolution > 0
         except Exception:
-            print 'invalid resolution, defaulting to 1'
+            print('invalid resolution, defaulting to 1')
             resolution = 1
 
     pyplot.ion()
     pyplot.show()
 
     nn = net_fn()
-    print '\nInitial neural net:\n', nn
+    print('\nInitial neural net:\n', nn)
 
-    print '\nIter, Accuracy:'
+    print('\nIter, Accuracy:')
 
     try:
         nn = multi_back_prop(nn, train, 1.0, -0.01, resolution)
-    except Exception, e:
+    except Exception as e:
         if str(type(e)) == "<class '_tkinter.TclError'>": #this is a hack
-            print '\nException caught: _tkinter.TclError:', e, '\n'
+            print('\nException caught: _tkinter.TclError:', e, '\n')
             Athena_ssh_error_message = ("If you are running this on Athena "
                 + "over ssh, try sshing again using the -X flag, which allows "
                 + "Athena to display GUI windows on your local desktop.  "
@@ -239,7 +239,7 @@ def start_training(data=None, net=None, resolution=None):
 
     pyplot.ioff()
 
-    print '\nTrained neural net:\n', nn
+    print('\nTrained neural net:\n', nn)
     data = multi_forward_prop(nn, sigmoid, resolution)[1]
 
     pyplot.clf()
@@ -256,16 +256,16 @@ if __name__ == "__main__":
     if '-data' in argv:
         train = argv[argv.index('-data') + 1]
     else:
-        print 'defaulting to diagonal training dataset'
+        print('defaulting to diagonal training dataset')
 
     if '-net' in argv:
         net = argv[argv.index('-net') + 1]
     else:
-        print 'defaulting to medium net'
+        print('defaulting to medium net')
 
     if '-resolution' in argv:
         resolution = argv[argv.index('-resolution') + 1]
     else:
-        print 'defaulting to resolution of 1'
+        print('defaulting to resolution of 1')
 
     start_training(train, net, resolution)

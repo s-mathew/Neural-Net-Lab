@@ -1,5 +1,5 @@
 # MIT 6.034 Lab 6: Neural Nets
-# Written by Jessica Noss (jmn), Dylan Holmes (dxh), Jake Barnwell (jb16), and 6.034 staff
+# Written by 6.034 Staff
 
 from nn_problems import *
 from math import e
@@ -45,7 +45,7 @@ def node_value(node, input_values, neuron_outputs):  # STAFF PROVIDED
     """Given a node, a dictionary mapping input names to their values, and a
     dictionary mapping neuron names to their outputs, returns the output value
     of the node."""
-    if isinstance(node, basestring):
+    if isinstance(node, str):
         return input_values[node] if node in input_values else neuron_outputs[node]
     return node  # constant input, such as -1
 
@@ -56,6 +56,7 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     (1) the final output of the neural net
     (2) a dictionary mapping neurons to their immediate outputs"""
     raise NotImplementedError
+
 
 # Backward propagation warm-up
 def gradient_ascent_step(func, inputs, step_size):
@@ -71,6 +72,7 @@ def get_back_prop_dependencies(net, wire):
     """Given a wire in a neural network, returns a set of inputs, neurons, and
     Wires whose outputs/values are required to update this wire's weight."""
     raise NotImplementedError
+
 
 # Backward propagation
 def calculate_deltas(net, desired_output, neuron_outputs):

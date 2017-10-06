@@ -14,7 +14,7 @@ def randnum(max_val=100):
 
 def dict_contains(d, pairs):
     "Returns True if d contains all the specified pairs, otherwise False"
-    items = d.items()
+    items = list(d.items())
     return all([p in items for p in pairs])
 
 def dict_approx_equal(dict1, dict2, epsilon=0.00000001):
@@ -22,7 +22,10 @@ def dict_approx_equal(dict1, dict2, epsilon=0.00000001):
     values, otherwise False"""
     return (set(dict1.keys()) == set(dict2.keys())
             and all([approx_equal(dict1[key], dict2[key], epsilon)
-                     for key in dict1.keys()]))
+                     for key in list(dict1.keys())]))
+
+def approx_equal(a, b, epsilon=0.0001):
+    return abs(a - b) <= epsilon
 
 
 # WIRING A NEURAL NET
@@ -372,7 +375,7 @@ def forward_prop_8_getargs() :  #TEST 28
     return [input_net, {'x':20, 'y':23.5}, ReLU]
 def forward_prop_8_testanswer(val, original_val = None) :
     out, d = val
-    return out == 42 and d['N1'] == out and input_net == not_modified
+    return approx_equal(out, 42) and approx_equal(d['N1'], out) and input_net == not_modified
 make_test(type = 'FUNCTION_ENCODED_ARGS',
           getargs = forward_prop_8_getargs,
           testanswer = forward_prop_8_testanswer,
