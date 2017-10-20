@@ -7,11 +7,12 @@ from __future__ import print_function
 
 from sys import argv
 from random import random, shuffle
-from matplotlib import pyplot
+from matplotlib import pyplot, cm
 import numpy
-import _tkinter
+# import _tkinter
 from lab6 import *
 
+colormap = cm.get_cmap("plasma")
 def multi_accuracy(desired_outputs, actual_outputs):
     pairs = []
     actual_outputs.sort()
@@ -39,7 +40,8 @@ def multi_forward_prop(net, threshold_fn=sigmoid, resolution=1):
         data.append(line)
     data = numpy.array(data)
 
-    pyplot.pcolor(data)
+    pyplot.pcolor(data, cmap=colormap)
+    # pyplot.pcolor(data)
     pyplot.pause(0.0001)
 
     return (sorted(outputs), data)
@@ -243,7 +245,7 @@ def start_training(data=None, net=None, resolution=None):
     data = multi_forward_prop(nn, sigmoid, resolution)[1]
 
     pyplot.clf()
-    pc = pyplot.pcolor(data)
+    pc = pyplot.pcolor(data, cmap=colormap)
     pyplot.colorbar(pc)
     pyplot.show()
 

@@ -5,9 +5,8 @@ from nn_problems import *
 from math import e
 INF = float('inf')
 
-#### NEURAL NETS ###############################################################
 
-# Wiring a neural net
+#### Part 1: Wiring a Neural Net ###############################################
 
 nn_half = []
 
@@ -20,6 +19,9 @@ nn_stripe = []
 nn_hexagon = []
 
 nn_grid = []
+
+
+#### Part 2: Coding Warmup #####################################################
 
 # Threshold functions
 def stairstep(x, threshold=0):
@@ -39,15 +41,32 @@ def accuracy(desired_output, actual_output):
     "Computes accuracy. If output is binary, accuracy ranges from -0.5 to 0."
     raise NotImplementedError
 
-# Forward propagation
 
-def node_value(node, input_values, neuron_outputs):  # STAFF PROVIDED
-    """Given a node, a dictionary mapping input names to their values, and a
-    dictionary mapping neuron names to their outputs, returns the output value
-    of the node."""
+#### Part 3: Forward Propagation ###############################################
+
+def node_value(node, input_values, neuron_outputs):  # PROVIDED BY THE STAFF
+    """
+    Given 
+     * a node (as an input or as a neuron),
+     * a dictionary mapping input names to their values, and
+     * a dictionary mapping neuron names to their outputs
+    returns the output value of the node.
+    This function does NOT do any computation; it simply looks up
+    values in the provided dictionaries.
+    """
     if isinstance(node, str):
-        return input_values[node] if node in input_values else neuron_outputs[node]
-    return node  # constant input, such as -1
+        # A string node (either an input or a neuron)
+        if node in input_values:
+            return input_values[node]
+        if node in neuron_outputs:
+            return neuron_outputs[node]
+        raise KeyError("Node '{}' not found in either the input values or neuron outputs dictionary.".format(node))
+    
+    if isinstance(node, (int, float)):
+        # A constant input, such as -1
+        return node
+    
+    raise TypeError("Node argument is {}; should be either a string or a number.".format(node))
 
 def forward_prop(net, input_values, threshold_fn=stairstep):
     """Given a neural net and dictionary of input values, performs forward
@@ -58,7 +77,8 @@ def forward_prop(net, input_values, threshold_fn=stairstep):
     raise NotImplementedError
 
 
-# Backward propagation warm-up
+#### Part 4: Backward Propagation ##############################################
+
 def gradient_ascent_step(func, inputs, step_size):
     """Given an unknown function of three variables and a list of three values
     representing the current inputs into the function, increments each variable
@@ -73,8 +93,6 @@ def get_back_prop_dependencies(net, wire):
     Wires whose outputs/values are required to update this wire's weight."""
     raise NotImplementedError
 
-
-# Backward propagation
 def calculate_deltas(net, desired_output, neuron_outputs):
     """Given a neural net and a dictionary of neuron outputs from forward-
     propagation, computes the update coefficient (delta_B) for each
@@ -98,7 +116,7 @@ def back_prop(net, input_values, desired_output, r=1, minimum_accuracy=-0.001):
     raise NotImplementedError
 
 
-# Training a neural net
+#### Part 5: Training a Neural Net #############################################
 
 ANSWER_1 = None
 ANSWER_2 = None
