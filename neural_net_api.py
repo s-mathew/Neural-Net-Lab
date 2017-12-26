@@ -178,7 +178,6 @@ class NeuralNet:
         wire_key = lambda w: str(w.startNode) + '-' + str(w.endNode)
         sort_wires = lambda wires: sorted(wires, key=wire_key)
         try:
-            # print("Here 1")
             assert sort_nodes(self.inputs) == sort_nodes(other.inputs)
             assert sort_nodes(self.neurons) == sort_nodes(other.neurons)
             assert len(self.wires) == len(other.wires)
